@@ -1,21 +1,5 @@
 #include "PlayerGUI.h"
 
-void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
-    playerAudio.prepareToPlay(samplesPerBlockExpected, sampleRate);
-}
-
-void PlayerGUI::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
-    playerAudio.getNextAudioBlock(bufferToFill);
-}
-
-void PlayerGUI::releaseResources(){
-    playerAudio.releaseResources();
-}
-
-void PlayerGUI::paint(juce::Graphics& g){
-    g.fillAll(juce::Colours::darkgrey);
-}
-
 PlayerGUI::PlayerGUI(){
     // Add buttons
     for (auto* btn : {&loadButton, &restartButton , &stopButton} ){
@@ -26,8 +10,11 @@ PlayerGUI::PlayerGUI(){
     // Volume slider
     volumeSlider.setRange(0.0, 1.0, 0.01);
     volumeSlider.setValue(0.5);
-    volumeSlider.addListener(this);
     addAndMakeVisible(volumeSlider);
+    volumeSlider.addListener(this);
+}
+
+PlayerGUI::~PlayerGUI(){
 }
 
 void PlayerGUI::resized(){
@@ -41,7 +28,21 @@ void PlayerGUI::resized(){
     volumeSlider.setBounds(20, 100, getWidth() - 40, 30);
 }
 
-PlayerGUI::~PlayerGUI(){}
+void PlayerGUI::paint(juce::Graphics& g){
+    g.fillAll(juce::Colours::darkgrey);
+}
+
+void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
+    playerAudio.prepareToPlay(samplesPerBlockExpected, sampleRate);
+}
+
+void PlayerGUI::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
+    playerAudio.getNextAudioBlock(bufferToFill);
+}
+
+void PlayerGUI::releaseResources(){
+    playerAudio.releaseResources();
+}
 
 void PlayerGUI::buttonClicked(juce::Button* button){
     if (button == &loadButton){
@@ -56,8 +57,7 @@ void PlayerGUI::buttonClicked(juce::Button* button){
 
         fileChooser->launchAsync(
             juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-            [this](const juce::FileChooser& fc)
-            {
+            [this](const juce::FileChooser& fc){
                 auto file = fc.getResult();
                 if (file.existsAsFile()){
                     playerAudio.loadFile(file);
@@ -65,13 +65,11 @@ void PlayerGUI::buttonClicked(juce::Button* button){
             });
     }
 
-    if (button == &restartButton)
-    {
+    if (button == &restartButton){
         playerAudio.start();
     }
 
-    if (button == &stopButton)
-    {
+    if (button == &stopButton){
         playerAudio.stop();
         playerAudio.setPosition(0.0);
     }

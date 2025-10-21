@@ -4,7 +4,9 @@ PlayerAudio::PlayerAudio(){
     formatManager.registerBasicFormats();
 }
 
-PlayerAudio::~PlayerAudio(){}
+PlayerAudio::~PlayerAudio(){
+    
+}
 
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);

@@ -1,29 +1,24 @@
 ﻿#include "MainComponent.h"
 
-MainComponent::MainComponent()
-{
+MainComponent::MainComponent(){
     addAndMakeVisible(player1);
     setSize(500, 250);
     setAudioChannels(0, 2);
 }
 
-MainComponent::~MainComponent()
-{
+MainComponent::~MainComponent(){
     shutdownAudio();
 }
 
-void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
-{
+void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
     player1.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
-void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
-{
+void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
     player1.getNextAudioBlock(bufferToFill);
 }
 
-void MainComponent::releaseResources()
-{
+void MainComponent::releaseResources(){
     player1.releaseResources();
 }
 

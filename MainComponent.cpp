@@ -5,7 +5,7 @@ MainComponent::MainComponent()
     formatManager.registerBasicFormats();
 
     // Add buttons
-    for (auto* btn : { &loadButton, &restartButton , & stopButton ,  &loopButton}) //added loop button
+    for (auto* btn : { &loadButton, &restartButton , & stopButton})
     {
         btn->addListener(this);
         addAndMakeVisible(btn);
@@ -34,12 +34,6 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
     transportSource.getNextAudioBlock(bufferToFill);
-    // If audio finished playing and loop is enabled, restart automatically
-    if (shouldLoop && transportSource.hasStreamFinished())
-    {
-        transportSource.setPosition(0.0); // Go back to start
-        transportSource.start();          // Play again
-    }
 }
 
 void MainComponent::releaseResources()
@@ -58,7 +52,6 @@ void MainComponent::resized()
     loadButton.setBounds(20, y, 100, 40);
     restartButton.setBounds(140, y, 80, 40);
     stopButton.setBounds(240, y, 80, 40);
-    loopButton.setBounds(340, y, 80, 40); // Position of Loop button
     /*prevButton.setBounds(340, y, 80, 40);
     nextButton.setBounds(440, y, 80, 40);*/
 
@@ -116,19 +109,8 @@ void MainComponent::buttonClicked(juce::Button* button)
         transportSource.stop();
         transportSource.setPosition(0.0);
     }
-    // Loop Button Clicked
-    if (button == &loopButton)
-    {
-        shouldLoop = !shouldLoop; // Toggle loop status (on/off)
-
-        if (shouldLoop)
-            loopButton.setButtonText("Loop: ON");  // Change text to show it's active
-        else
-            loopButton.setButtonText("Loop: OFF"); // Change text to show it's off
-    }
 
 }
-
 
 void MainComponent::sliderValueChanged(juce::Slider* slider)
 {

@@ -12,7 +12,7 @@ public:
     void releaseResources();
 
     bool loadFile(const juce::File& file);
-    void play();
+    void start();
     void stop();
     void setGain(float gain);
     void setPosition(double pos);

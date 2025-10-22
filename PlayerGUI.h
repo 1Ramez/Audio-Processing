@@ -24,6 +24,8 @@ private:
     juce::TextButton loadButton{ "Load File" };
     juce::TextButton restartButton{ "Restart" };
     juce::TextButton stopButton{ "Stop" };
+    juce::TextButton playButton { "Play" };
+    juce::TextButton pauseButton { "Pause" };
     juce::TextButton loopButton { "Loop" }; // Button to enable/disable loop
     bool shouldLoop = false; // Keeps track of whether looping is enabled or not
     juce::Slider volumeSlider;

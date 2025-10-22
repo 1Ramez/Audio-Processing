@@ -2,7 +2,7 @@
 
 PlayerGUI::PlayerGUI(){
     // Add buttons
-    for (auto* btn : {&loadButton, &restartButton , &stopButton, &loopButton} ){ //add loop button
+    for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton, &pauseButton, &loopButton} ){
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
@@ -22,15 +22,15 @@ void PlayerGUI::resized(){
     loadButton.setBounds(20, y, 100, 40);
     restartButton.setBounds(140, y, 80, 40);
     stopButton.setBounds(240, y, 80, 40);
-    loopButton.setBounds(340, y, 80, 40); // Position of Loop button
-    /*prevButton.setBounds(340, y, 80, 40);
-    nextButton.setBounds(440, y, 80, 40);*/
+    playButton.setBounds(340,y,80,40);
+    pauseButton.setBounds(440,y,80,40);
+    loopButton.setBounds(540, y, 80, 40);
 
     volumeSlider.setBounds(20, 100, getWidth() - 40, 30);
 }
 
 void PlayerGUI::paint(juce::Graphics& g){
-    g.fillAll(juce::Colours::darkgrey);
+    g.fillAll(juce::Colours::blueviolet);
 }
 
 void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
@@ -67,17 +67,6 @@ void PlayerGUI::buttonClicked(juce::Button* button){
             });
 
     }
-    // Loop Button Clicked
-    if (button == &loopButton)
-    {
-        shouldLoop = !shouldLoop; // loop status (on/off)
-        playerAudio.setLooping(shouldLoop); //pass the value
-
-        if (shouldLoop)
-            loopButton.setButtonText("Loop: ON");  //to show it's active
-        else
-            loopButton.setButtonText("Loop: OFF"); // to show it's off
-    }
 
     if (button == &restartButton){
         playerAudio.start();
@@ -88,6 +77,24 @@ void PlayerGUI::buttonClicked(juce::Button* button){
         playerAudio.setPosition(0.0);
     }
 
+    if (button == &playButton){
+        playerAudio.start();
+    }
+
+    if (button == &pauseButton){
+        playerAudio.stop();
+    }
+
+    if (button == &loopButton){
+        shouldLoop = !shouldLoop; // loop status (on/off)
+        playerAudio.setLooping(shouldLoop); //pass the value
+
+        if (shouldLoop)
+            loopButton.setButtonText("Loop: ON");  //to show it's active
+        else
+            loopButton.setButtonText("Loop: OFF"); // to show it's off
+    }
+    
 }
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider){

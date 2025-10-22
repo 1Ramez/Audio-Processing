@@ -2,7 +2,7 @@
 
 PlayerGUI::PlayerGUI(){
     // Add buttons
-    for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton, &pauseButton, &loopButton} ){
+    for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton, &pauseButton, &loopButton, &toStartButton, &toEndButton} ){
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
@@ -18,15 +18,23 @@ PlayerGUI::~PlayerGUI(){
 }
 
 void PlayerGUI::resized(){
-    int y = 20;
-    loadButton.setBounds(20, y, 100, 40);
-    restartButton.setBounds(140, y, 80, 40);
-    stopButton.setBounds(240, y, 80, 40);
-    playButton.setBounds(340,y,80,40);
-    pauseButton.setBounds(440,y,80,40);
-    loopButton.setBounds(540, y, 80, 40);
 
-    volumeSlider.setBounds(20, 100, getWidth() - 40, 30);
+    //Row 1
+    int y = 20, w = 80, h = 40;
+    loadButton.setBounds(20, y, w+20 , h);
+    restartButton.setBounds(140, y, w, h);
+    stopButton.setBounds(240, y, w, h);
+    playButton.setBounds(340, y, w, h);
+    pauseButton.setBounds(440, y, w, h);
+    loopButton.setBounds(540, y, w, h);
+
+    //Row 2
+    int y2 = y + h + 10;
+    toStartButton.setBounds(20, y2, w+20, h);
+    toEndButton.setBounds(140, y2, w, h);
+    
+
+    volumeSlider.setBounds(20, y2 + 60, getWidth() - 40, 30);
 }
 
 void PlayerGUI::paint(juce::Graphics& g){
@@ -69,6 +77,7 @@ void PlayerGUI::buttonClicked(juce::Button* button){
     }
 
     if (button == &restartButton){
+        playerAudio.setPosition(0.0);
         playerAudio.start();
     }
 
@@ -94,7 +103,18 @@ void PlayerGUI::buttonClicked(juce::Button* button){
         else
             loopButton.setButtonText("Loop: OFF"); // to show it's off
     }
-    
+
+    if (button == &toStartButton){
+        playerAudio.setPosition(0.0);
+    }
+
+    if (button == &toEndButton){
+        double length = playerAudio.getLength();
+        if (length > 0.0){
+            playerAudio.setPosition(length - 0.1);
+        }
+    }
+
 }
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider){

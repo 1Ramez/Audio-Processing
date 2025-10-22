@@ -28,6 +28,8 @@ private:
     juce::TextButton pauseButton { "Pause" };
     juce::TextButton loopButton { "Loop" }; // Button to enable/disable loop
     bool shouldLoop = false; // Keeps track of whether looping is enabled or not
+    juce::TextButton toStartButton { "To Start" };
+    juce::TextButton toEndButton { "To End" };
     juce::Slider volumeSlider;
 
     std::unique_ptr<juce::FileChooser> fileChooser;

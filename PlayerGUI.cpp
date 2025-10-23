@@ -2,7 +2,7 @@
 
 PlayerGUI::PlayerGUI(){
     // Add buttons
-    for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton, &pauseButton, &loopButton, &toStartButton, &toEndButton} ){
+    for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton, &pauseButton, &loopButton, &toStartButton, &toEndButton, &muteButton} ){
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
@@ -27,6 +27,7 @@ void PlayerGUI::resized(){
     playButton.setBounds(340, y, w, h);
     pauseButton.setBounds(440, y, w, h);
     loopButton.setBounds(540, y, w, h);
+    muteButton.setBounds(640, y, w, h);
 
     //Row 2
     int y2 = y + h + 10;
@@ -38,7 +39,7 @@ void PlayerGUI::resized(){
 }
 
 void PlayerGUI::paint(juce::Graphics& g){
-    g.fillAll(juce::Colours::blueviolet);
+    g.fillAll(juce::Colours::mediumslateblue);
 }
 
 void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
@@ -114,10 +115,27 @@ void PlayerGUI::buttonClicked(juce::Button* button){
             playerAudio.setPosition(length - 0.1);
         }
     }
+    if (button == &muteButton)
+{
+    if (isMuted == false) 
+    {
+        isMuted = true;           
+        playerAudio.setMute(true); 
+        muteButton.setButtonText("Unmute"); 
+    }
+    else                    
+    {
+        isMuted = false;          
+        playerAudio.setMute(false);
+        muteButton.setButtonText("Mute");   
+    }
+}
 
 }
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider){
     if (slider == &volumeSlider)
         playerAudio.setGain((float)slider->getValue());
+    if (muteButton.getButtonText() == "Unmute")
+        muteButton.setButtonText("Mute");
 }

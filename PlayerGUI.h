@@ -30,6 +30,8 @@ private:
     bool shouldLoop = false; // Keeps track of whether looping is enabled or not
     juce::TextButton toStartButton { "To Start" };
     juce::TextButton toEndButton { "To End" };
+    juce::TextButton muteButton{ "Mute" };
+    bool isMuted = false;
     juce::Slider volumeSlider;
 
     std::unique_ptr<juce::FileChooser> fileChooser;

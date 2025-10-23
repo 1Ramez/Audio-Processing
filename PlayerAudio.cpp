@@ -53,6 +53,12 @@ void PlayerAudio::stop(){
 }
 
 void PlayerAudio::setGain(float gain){
+    currentGain = gain;  //save current audio     
+      if (isMuted)
+    {
+        isMuted = false;
+    }
+
     transportSource.setGain(gain);
 }
 
@@ -83,5 +89,21 @@ void PlayerAudio::checkAndHandleLooping()
             transportSource.setPosition(0.0);
             transportSource.start();
         }
+    }
+}
+ //Mute effect
+void PlayerAudio::setMute(bool shouldMute)
+{
+    if (shouldMute && !isMuted)
+    {
+        lastGainBeforeMute = currentGain;  
+        transportSource.setGain(0.0f);    
+        isMuted = true;
+    }
+    else if (!shouldMute && isMuted)
+    {
+        transportSource.setGain(lastGainBeforeMute); 
+        currentGain = lastGainBeforeMute;
+        isMuted = false;
     }
 }

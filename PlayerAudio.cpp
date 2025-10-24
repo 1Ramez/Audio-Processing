@@ -15,7 +15,6 @@ void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
 void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
     transportSource.getNextAudioBlock(bufferToFill);
     checkAndHandleLooping();
-
 }
 
 void PlayerAudio::releaseResources(){
@@ -53,9 +52,9 @@ void PlayerAudio::stop(){
 }
 
 void PlayerAudio::setGain(float gain){
-    currentGain = gain;  //save current audio     
-      if (isMuted)
-    {
+    //save current audio
+    currentGain = gain;    
+    if (isMuted){
         isMuted = false;
     }
 
@@ -78,30 +77,25 @@ void PlayerAudio::setLooping(bool shouldLoop){
     isLooping = shouldLoop;
 }
 
- //loop effect
-void PlayerAudio::checkAndHandleLooping()
-{
-    if (isLooping)
-    {
-
-        if (transportSource.getCurrentPosition() >= transportSource.getLengthInSeconds())
-        {
+//loop effect
+void PlayerAudio::checkAndHandleLooping(){
+    if (isLooping){
+        if (transportSource.getCurrentPosition() >= transportSource.getLengthInSeconds()){
             transportSource.setPosition(0.0);
             transportSource.start();
         }
     }
 }
- //Mute effect
-void PlayerAudio::setMute(bool shouldMute)
-{
-    if (shouldMute && !isMuted)
-    {
+
+//Mute effect
+void PlayerAudio::setMute(bool shouldMute){
+    if (shouldMute && !isMuted){
         lastGainBeforeMute = currentGain;  
-        transportSource.setGain(0.0f);    
+        transportSource.setGain(0.0);    
         isMuted = true;
     }
-    else if (!shouldMute && isMuted)
-    {
+
+    else if(!shouldMute && isMuted){
         transportSource.setGain(lastGainBeforeMute); 
         currentGain = lastGainBeforeMute;
         isMuted = false;

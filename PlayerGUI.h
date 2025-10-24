@@ -27,14 +27,17 @@ private:
     juce::TextButton playButton { "Play" };
     juce::TextButton pauseButton { "Pause" };
     juce::TextButton loopButton { "Loop" }; // Button to enable/disable loop
-    bool shouldLoop = false; // Keeps track of whether looping is enabled or not
     juce::TextButton toStartButton { "To Start" };
     juce::TextButton toEndButton { "To End" };
-    juce::TextButton muteButton{ "Mute" };
-    bool isMuted = false;
+    juce::TextButton muteButton { "Mute" };
+
     juce::Slider volumeSlider;
 
     std::unique_ptr<juce::FileChooser> fileChooser;
+
+    //Variables
+    bool shouldLoop = false; // Keeps track of whether looping is enabled or not
+    bool isMuted = false;
 
     // Event handlers
     void buttonClicked(juce::Button* button) override;

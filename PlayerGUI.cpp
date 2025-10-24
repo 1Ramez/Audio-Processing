@@ -2,7 +2,9 @@
 
 PlayerGUI::PlayerGUI(){
     // Add buttons
-    for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton, &pauseButton, &loopButton, &toStartButton, &toEndButton, &muteButton} ){
+    for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton,
+            &pauseButton, &loopButton, &toStartButton, &toEndButton, &muteButton}){
+
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
@@ -115,21 +117,19 @@ void PlayerGUI::buttonClicked(juce::Button* button){
             playerAudio.setPosition(length - 0.1);
         }
     }
-    if (button == &muteButton)
-{
-    if (isMuted == false) 
-    {
-        isMuted = true;           
-        playerAudio.setMute(true); 
-        muteButton.setButtonText("Unmute"); 
+    
+    if (button == &muteButton){
+        if (isMuted == false){
+            isMuted = true;           
+            playerAudio.setMute(true); 
+            muteButton.setButtonText("Unmute"); 
+        }
+        else{
+            isMuted = false;          
+            playerAudio.setMute(false);
+            muteButton.setButtonText("Mute");   
+        }
     }
-    else                    
-    {
-        isMuted = false;          
-        playerAudio.setMute(false);
-        muteButton.setButtonText("Mute");   
-    }
-}
 
 }
 

@@ -19,8 +19,9 @@ public:
     double getPosition() const;
     double getLength() const;
     void setLooping(bool shouldLoop);
+    void checkAndHandleLooping();
     void setMute(bool shouldMute);
-    bool getMute() const { return isMuted; }
+
 
 private:
     juce::AudioFormatManager formatManager;
@@ -29,8 +30,7 @@ private:
 
     bool isLooping = false;
     bool isMuted = false;
-    float currentGain = 0.5f;
-    float lastGainBeforeMute = 0.5f;
-    void checkAndHandleLooping();
+    float currentGain = 0.5;
+    float lastGainBeforeMute = 0.5;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerAudio)
 };

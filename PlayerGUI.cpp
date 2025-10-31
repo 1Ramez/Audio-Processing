@@ -9,6 +9,17 @@ PlayerGUI::PlayerGUI(){
         addAndMakeVisible(btn);
     }
 
+    //Add Labels
+    for (auto* label : {&titleLabel, &authorLabel, &durationLabel}){
+        addAndMakeVisible(label);
+        label->setColour(juce::Label::backgroundColourId, juce::Colours::darkslategrey);
+        label->setEditable(false,false,false);
+        label->setJustificationType(juce::Justification::centred);
+    }
+    titleLabel.setText("Title: ", juce::dontSendNotification);
+    authorLabel.setText("Author: ", juce::dontSendNotification);
+    durationLabel.setText("Duration: ", juce::dontSendNotification);
+
     // Volume slider
     volumeSlider.setRange(0.0, 1.0, 0.01);
     volumeSlider.setValue(0.5);
@@ -30,11 +41,15 @@ void PlayerGUI::resized(){
     pauseButton.setBounds(440, y, w, h);
     loopButton.setBounds(540, y, w, h);
     muteButton.setBounds(640, y, w, h);
+    titleLabel.setBounds(740,y,2*w,h);
+    authorLabel.setBounds(920,y,2*w,h);
+    durationLabel.setBounds(1100,y,w+20,h);
 
     //Row 2
     int y2 = y + h + 10;
     toStartButton.setBounds(20, y2, w+20, h);
     toEndButton.setBounds(140, y2, w, h);
+
     
 
     volumeSlider.setBounds(20, y2 + 60, getWidth() - 40, 30);
@@ -74,6 +89,12 @@ void PlayerGUI::buttonClicked(juce::Button* button){
                 auto file = fc.getResult();
                 if (file.existsAsFile()){
                     playerAudio.loadFile(file);
+                    playerAudio.readMeta(file);
+
+                    //Showing the metadata on labels
+                    titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
+                    authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
+                    durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
                 }
             });
 
@@ -119,14 +140,12 @@ void PlayerGUI::buttonClicked(juce::Button* button){
     }
     
     if (button == &muteButton){
-        if (isMuted == false){
-            isMuted = true;           
-            playerAudio.setMute(true); 
+        isMuted = !isMuted;
+        playerAudio.setMute(isMuted);
+        if (isMuted){          
             muteButton.setButtonText("Unmute"); 
         }
         else{
-            isMuted = false;          
-            playerAudio.setMute(false);
             muteButton.setButtonText("Mute");   
         }
     }

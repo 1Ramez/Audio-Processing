@@ -43,6 +43,45 @@ bool PlayerAudio::loadFile(const juce::File& file){
     return true;
 }
 
+bool PlayerAudio::readMeta(const juce::File& file){
+    if (file.existsAsFile()){
+        juce::AudioFormatManager tempManager;
+        tempManager.registerBasicFormats();
+
+        if (auto* reader = tempManager.createReaderFor(file)){
+            juce::StringPairArray meta = reader->metadataValues;
+
+            title  = meta["title"];
+            author = meta["artist"];
+
+            if (title.isEmpty()){
+                title  = meta["INAM"];
+            }
+            if (author.isEmpty()){
+                author = meta["IART"];
+            }
+            
+            //Calculate duration
+            double lengthSeconds = transportSource.getLengthInSeconds();
+            int seconds = (int) lengthSeconds;
+            int minutes = seconds/60;
+            seconds = seconds - (minutes*60);
+            durationText = juce::String::formatted("%d:%02d", minutes, seconds);
+
+            //if data not found
+            if (title.isEmpty()){
+                title = file.getFileNameWithoutExtension();
+            }
+
+            if (author.isEmpty()){
+                author = "Unknown Author";
+            }
+            delete reader;
+        }
+    }
+    return true;
+}
+
 void PlayerAudio::start(){
     transportSource.start();
 }
@@ -71,6 +110,18 @@ double PlayerAudio::getPosition() const{
 
 double PlayerAudio::getLength() const{
     return transportSource.getLengthInSeconds();
+}
+
+juce::String PlayerAudio::getTitle() const{
+    return title;
+}
+
+juce::String PlayerAudio::getAuthor() const{
+    return author;
+}
+
+juce::String PlayerAudio::getDurationText() const{
+    return durationText;
 }
 
 void PlayerAudio::setLooping(bool shouldLoop){

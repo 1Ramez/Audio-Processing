@@ -20,26 +20,34 @@ public:
 private:
     PlayerAudio playerAudio;
 
-    // GUI elements
+//GUI elements
+    //Buttons
     juce::TextButton loadButton{ "Load File" };
     juce::TextButton restartButton{ "Restart" };
     juce::TextButton stopButton{ "Stop" };
     juce::TextButton playButton { "Play" };
     juce::TextButton pauseButton { "Pause" };
-    juce::TextButton loopButton { "Loop" }; // Button to enable/disable loop
+    juce::TextButton loopButton { "Loop" };
     juce::TextButton toStartButton { "To Start" };
     juce::TextButton toEndButton { "To End" };
     juce::TextButton muteButton { "Mute" };
 
+    //Sliders
     juce::Slider volumeSlider;
 
-    std::unique_ptr<juce::FileChooser> fileChooser;
+    //Labels
+    juce::Label titleLabel;
+    juce::Label authorLabel;
+    juce::Label durationLabel;
 
-    //Variables
-    bool shouldLoop = false; // Keeps track of whether looping is enabled or not
+//Variables
+    bool shouldLoop = false; //Keeps track of whether looping is enabled or not
     bool isMuted = false;
 
-    // Event handlers
+//File Chooser
+    std::unique_ptr<juce::FileChooser> fileChooser;
+
+//Event handlers
     void buttonClicked(juce::Button* button) override;
     void sliderValueChanged(juce::Slider* slider) override;
 

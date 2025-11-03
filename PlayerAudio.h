@@ -22,6 +22,9 @@ public:
     void setLooping(bool shouldLoop);
     void checkAndHandleLooping();
     void setMute(bool shouldMute);
+    void loadPlaylist(const juce::Array<juce::File> &files);
+    void playNext();
+    void playPrevious();
 
     juce::String getTitle() const;
     juce::String getAuthor() const;
@@ -40,5 +43,7 @@ private:
     juce::String title;
     juce::String author;
     juce::String durationText;
+    juce::Array<juce::File> playlistFiles;
+    int currFileIndex = -1;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerAudio)
 };

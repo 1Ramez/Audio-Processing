@@ -43,6 +43,7 @@ bool PlayerAudio::loadFile(const juce::File& file){
     return true;
 }
 
+//Reading MetaData and saving it in private strings
 bool PlayerAudio::readMeta(const juce::File& file){
     if (file.existsAsFile()){
         juce::AudioFormatManager tempManager;
@@ -151,4 +152,46 @@ void PlayerAudio::setMute(bool shouldMute){
         currentGain = lastGainBeforeMute;
         isMuted = false;
     }
+}
+
+//Loading Playlist
+void PlayerAudio::loadPlaylist(const juce::Array<juce::File> &files){
+    playlistFiles.clear();
+    playlistFiles.addArray(files);
+
+    if (playlistFiles.isEmpty()){
+        return;
+    }
+
+    currFileIndex = 0;
+    loadFile(playlistFiles[currFileIndex]);
+    readMeta(playlistFiles[currFileIndex]);
+}
+
+//Playing next file in the playlist
+void PlayerAudio::playNext(){
+    if (playlistFiles.isEmpty()){
+        return;
+    }
+    currFileIndex++;
+    if (currFileIndex >= playlistFiles.size()){
+        currFileIndex = 0;
+    }
+
+    loadFile(playlistFiles[currFileIndex]);
+    readMeta(playlistFiles[currFileIndex]);
+}
+
+//playing previous file in the playlist
+void PlayerAudio::playPrevious(){
+    if (playlistFiles.isEmpty()){
+        return;
+    }
+    currFileIndex--;
+    if (currFileIndex < 0){
+        currFileIndex = playlistFiles.size() - 1;
+    }
+
+    loadFile(playlistFiles[currFileIndex]);
+    readMeta(playlistFiles[currFileIndex]);
 }

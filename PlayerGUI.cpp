@@ -3,7 +3,7 @@
 PlayerGUI::PlayerGUI(){
     // Add buttons
     for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton,
-            &pauseButton, &loopButton, &toStartButton, &toEndButton, &muteButton}){
+            &pauseButton, &loopButton, &toStartButton, &toEndButton, &muteButton, &loadPlaylistButton, &nextButton, &previousButton}){
 
         btn->addListener(this);
         addAndMakeVisible(btn);
@@ -49,6 +49,9 @@ void PlayerGUI::resized(){
     int y2 = y + h + 10;
     toStartButton.setBounds(20, y2, w+20, h);
     toEndButton.setBounds(140, y2, w, h);
+    loadPlaylistButton.setBounds(240,y2,w+40,h);
+    nextButton.setBounds(380, y2, w, h);
+    previousButton.setBounds(480, y2, w, h);
 
     
 
@@ -89,6 +92,8 @@ void PlayerGUI::buttonClicked(juce::Button* button){
                 auto file = fc.getResult();
                 if (file.existsAsFile()){
                     playerAudio.loadFile(file);
+
+                    //Reading Meta data
                     playerAudio.readMeta(file);
 
                     //Showing the metadata on labels
@@ -148,6 +153,49 @@ void PlayerGUI::buttonClicked(juce::Button* button){
         else{
             muteButton.setButtonText("Mute");   
         }
+    }
+
+    if (button == &loadPlaylistButton){
+        juce::FileChooser chooser("Select audio files...",
+            juce::File{},
+            "*.wav;*.mp3");
+
+        fileChooser = std::make_unique<juce::FileChooser>(
+            "Select multiple audio files...",
+            juce::File{},
+            "*.wav;*.mp3");
+
+        fileChooser->launchAsync(
+            juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectMultipleItems,
+            [this](const juce::FileChooser& fc){
+                auto files = fc.getResults();
+
+                if (files.isEmpty()){
+                    return;
+                }
+
+                // Call PlayerAudio to handle playlist logic
+                playerAudio.loadPlaylist(files);
+
+                // Update metadata labels for the first file
+                titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
+                authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
+                durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
+            });
+    }
+
+    if (button == &nextButton){
+        playerAudio.playNext();
+        titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
+        authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
+        durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
+    }
+
+    if (button == &previousButton){
+        playerAudio.playPrevious();
+        titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
+        authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
+        durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
     }
 
 }

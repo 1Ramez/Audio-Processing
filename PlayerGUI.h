@@ -31,6 +31,9 @@ private:
     juce::TextButton toStartButton { "To Start" };
     juce::TextButton toEndButton { "To End" };
     juce::TextButton muteButton { "Mute" };
+    juce::TextButton loadPlaylistButton { "Load Playlist" };
+    juce::TextButton nextButton { "Next" };
+    juce::TextButton previousButton { "Previous" };
 
     //Sliders
     juce::Slider volumeSlider;

@@ -68,19 +68,21 @@ void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
 
 void PlayerGUI::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
     playerAudio.getNextAudioBlock(bufferToFill);
-
+    displayMeta();
 }
 
 void PlayerGUI::releaseResources(){
     playerAudio.releaseResources();
 }
 
+void PlayerGUI::displayMeta(){
+    titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
+    authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
+    durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
+}
+
 void PlayerGUI::buttonClicked(juce::Button* button){
     if (button == &loadButton){
-        juce::FileChooser chooser("Select audio files...",
-            juce::File{},
-            "*.wav;*.mp3");
-
         fileChooser = std::make_unique<juce::FileChooser>(
             "Select an audio file...",
             juce::File{},
@@ -97,9 +99,10 @@ void PlayerGUI::buttonClicked(juce::Button* button){
                     playerAudio.readMeta(file);
 
                     //Showing the metadata on labels
-                    titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
-                    authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
-                    durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
+                    displayMeta();
+
+                    //To cancel previous playlist
+                    playerAudio.delPlaylist();
                 }
             });
 
@@ -156,9 +159,9 @@ void PlayerGUI::buttonClicked(juce::Button* button){
     }
 
     if (button == &loadPlaylistButton){
-        juce::FileChooser chooser("Select audio files...",
-            juce::File{},
-            "*.wav;*.mp3");
+        // juce::FileChooser chooser("Select audio files...",
+        //     juce::File{},
+        //     "*.wav;*.mp3");
 
         fileChooser = std::make_unique<juce::FileChooser>(
             "Select multiple audio files...",
@@ -178,31 +181,27 @@ void PlayerGUI::buttonClicked(juce::Button* button){
                 playerAudio.loadPlaylist(files);
 
                 // Update metadata labels for the first file
-                titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
-                authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
-                durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
+                displayMeta();
             });
     }
 
     if (button == &nextButton){
         playerAudio.playNext();
-        titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
-        authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
-        durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
+        displayMeta();
     }
 
     if (button == &previousButton){
         playerAudio.playPrevious();
-        titleLabel.setText("Title: " + playerAudio.getTitle(), juce::dontSendNotification);
-        authorLabel.setText("Author: " + playerAudio.getAuthor(), juce::dontSendNotification);
-        durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
+        displayMeta();
     }
 
 }
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider){
-    if (slider == &volumeSlider)
+    if (slider == &volumeSlider){
         playerAudio.setGain((float)slider->getValue());
-    if (muteButton.getButtonText() == "Unmute")
         muteButton.setButtonText("Mute");
+        isMuted = false;
+    }
+
 }

@@ -20,11 +20,12 @@ public:
     double getPosition() const;
     double getLength() const;
     void setLooping(bool shouldLoop);
-    void checkAndHandleLooping();
+    void handleEnd();
     void setMute(bool shouldMute);
     void loadPlaylist(const juce::Array<juce::File> &files);
     void playNext();
     void playPrevious();
+    void delPlaylist();
 
     juce::String getTitle() const;
     juce::String getAuthor() const;
@@ -37,7 +38,6 @@ private:
 
 
     bool isLooping = false;
-    bool isMuted = false;
     float currentGain = 0.5;
     float lastGainBeforeMute = 0.5;
     juce::String title;

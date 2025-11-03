@@ -14,7 +14,7 @@ void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
 
 void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
     transportSource.getNextAudioBlock(bufferToFill);
-    checkAndHandleLooping();
+    handleEnd();
 }
 
 void PlayerAudio::releaseResources(){
@@ -46,10 +46,8 @@ bool PlayerAudio::loadFile(const juce::File& file){
 //Reading MetaData and saving it in private strings
 bool PlayerAudio::readMeta(const juce::File& file){
     if (file.existsAsFile()){
-        juce::AudioFormatManager tempManager;
-        tempManager.registerBasicFormats();
 
-        if (auto* reader = tempManager.createReaderFor(file)){
+        if (auto* reader = formatManager.createReaderFor(file)){
             juce::StringPairArray meta = reader->metadataValues;
 
             title  = meta["title"];
@@ -66,7 +64,7 @@ bool PlayerAudio::readMeta(const juce::File& file){
             double lengthSeconds = transportSource.getLengthInSeconds();
             int seconds = (int) lengthSeconds;
             int minutes = seconds/60;
-            seconds = seconds - (minutes*60);
+            seconds = seconds % 60;
             durationText = juce::String::formatted("%d:%02d", minutes, seconds);
 
             //if data not found
@@ -93,11 +91,7 @@ void PlayerAudio::stop(){
 
 void PlayerAudio::setGain(float gain){
     //save current audio
-    currentGain = gain;    
-    if (isMuted){
-        isMuted = false;
-    }
-
+    currentGain = gain;
     transportSource.setGain(gain);
 }
 
@@ -129,28 +123,25 @@ void PlayerAudio::setLooping(bool shouldLoop){
     isLooping = shouldLoop;
 }
 
-//loop effect
-void PlayerAudio::checkAndHandleLooping(){
-    if (isLooping){
-        if (transportSource.getCurrentPosition() >= transportSource.getLengthInSeconds()){
+//Handle when the file finish
+void PlayerAudio::handleEnd(){
+    if (transportSource.getCurrentPosition() >= transportSource.getLengthInSeconds()){
+        if (isLooping){
             transportSource.setPosition(0.0);
             transportSource.start();
+        }else if(!isLooping && currFileIndex >= 0){
+            playNext();
         }
     }
 }
 
 //Mute effect
 void PlayerAudio::setMute(bool shouldMute){
-    if (shouldMute && !isMuted){
+    if (shouldMute){
         lastGainBeforeMute = currentGain;  
-        transportSource.setGain(0.0);    
-        isMuted = true;
-    }
-
-    else if(!shouldMute && isMuted){
+        transportSource.setGain(0.0);
+    }else{
         transportSource.setGain(lastGainBeforeMute); 
-        currentGain = lastGainBeforeMute;
-        isMuted = false;
     }
 }
 
@@ -194,4 +185,10 @@ void PlayerAudio::playPrevious(){
 
     loadFile(playlistFiles[currFileIndex]);
     readMeta(playlistFiles[currFileIndex]);
+}
+
+//reset the playlist (used to cancel current playlist when playing a signle file)
+void PlayerAudio::delPlaylist(){
+    currFileIndex = -1;
+    playlistFiles.clear();
 }

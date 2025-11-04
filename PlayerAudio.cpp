@@ -21,6 +21,8 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
             transportSource.setPosition(loopStartSeconds);
         }
     }
+
+    bufferToFill.buffer->applyGain(bufferToFill.startSample, bufferToFill.numSamples, currentGain);
 }
 
 void PlayerAudio::releaseResources(){
@@ -204,25 +206,22 @@ void PlayerAudio::delPlaylist(){
 }
 
 //Postion Looping
-void PlayerAudio::setLoopStartPoint()
-{
+void PlayerAudio::setLoopStartPoint(){
     loopStartSeconds = getPosition();
 
-    if (loopStartSeconds >= loopEndSeconds) {
+    if (loopStartSeconds >= loopEndSeconds){
         loopEndSeconds = getLength();
     }
 }
 
-void PlayerAudio::setLoopEndPoint()
-{
+void PlayerAudio::setLoopEndPoint(){
     loopEndSeconds = getPosition();
 
-    if (loopEndSeconds <= loopStartSeconds) {
+    if (loopEndSeconds <= loopStartSeconds){
         loopStartSeconds = 0.0;
     }
 }
 
-void PlayerAudio::setABLooping(bool shouldABLoop)
-{
+void PlayerAudio::setABLooping(bool shouldABLoop){
     isABLoopingActive = shouldABLoop;
 }

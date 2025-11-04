@@ -17,10 +17,20 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 }
 
 void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
+    bufferToFill.clearActiveBufferRegion();
+
+    //buffer for player 2
+    juce::AudioBuffer<float> buffer2(bufferToFill.buffer->getNumChannels(),bufferToFill.numSamples);
+    juce::AudioSourceChannelInfo buffertoFill2(&buffer2, 0, bufferToFill.numSamples);
+
+    //Fill both players
     player1.getNextAudioBlock(bufferToFill);
-    if(!player1.isPlaying()){
-        player2.getNextAudioBlock(bufferToFill);
-    }
+    player2.getNextAudioBlock(buffertoFill2);
+
+    //Mix player 2 into main buffer
+    for (int ch = 0; ch < bufferToFill.buffer->getNumChannels(); ch++){
+        bufferToFill.buffer->addFrom(ch, 0, buffer2, ch, 0, bufferToFill.numSamples);
+    }  
 }
 
 void MainComponent::releaseResources(){

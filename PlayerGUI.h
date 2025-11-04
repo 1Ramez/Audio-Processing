@@ -4,7 +4,8 @@
 
 class PlayerGUI : public juce::Component,
     public juce::Button::Listener,
-    public juce::Slider::Listener
+    public juce::Slider::Listener,
+    public juce::Timer
 {
 public:
     PlayerGUI();
@@ -17,7 +18,7 @@ public:
     void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill);
     void releaseResources();
     void displayMeta();
-
+    void timerCallback() override;
 private:
     PlayerAudio playerAudio;
 
@@ -35,9 +36,13 @@ private:
     juce::TextButton loadPlaylistButton { "Load Playlist" };
     juce::TextButton nextButton { "Next" };
     juce::TextButton previousButton { "Previous" };
+    juce::TextButton setAButton{ "Set - A" };
+    juce::TextButton setBButton{ "Set - B" };
+    juce::ToggleButton loopABButton{ "A-B Loop" };
 
     //Sliders
     juce::Slider volumeSlider;
+    juce::Slider positionSlider;
 
     //Labels
     juce::Label titleLabel;

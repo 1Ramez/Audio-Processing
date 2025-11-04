@@ -26,6 +26,9 @@ public:
     void playNext();
     void playPrevious();
     void delPlaylist();
+    void setLoopStartPoint();
+    void setLoopEndPoint();
+    void setABLooping(bool shouldABLoop);
 
     juce::String getTitle() const;
     juce::String getAuthor() const;
@@ -36,7 +39,9 @@ private:
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;
 
-
+    double loopStartSeconds = 0.0;
+    double loopEndSeconds = 0.0;
+    bool isABLoopingActive = false;
     bool isLooping = false;
     float currentGain = 0.5;
     float lastGainBeforeMute = 0.5;

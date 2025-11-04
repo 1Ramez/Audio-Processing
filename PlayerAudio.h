@@ -30,6 +30,8 @@ public:
     void setLoopEndPoint();
     void setABLooping(bool shouldABLoop);
     bool isPlaying();
+    void jumpForward(double seconds);
+    void jumpBackward(double seconds);
 
     juce::String getTitle() const;
     juce::String getAuthor() const;

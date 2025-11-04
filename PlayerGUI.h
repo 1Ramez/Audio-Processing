@@ -23,7 +23,7 @@ public:
 private:
     PlayerAudio playerAudio;
 
-//GUI elements
+    //GUI elements
     //Buttons
     juce::TextButton loadButton{ "Load File" };
     juce::TextButton restartButton{ "Restart" };
@@ -40,6 +40,9 @@ private:
     juce::TextButton setAButton{ "Set - A" };
     juce::TextButton setBButton{ "Set - B" };
     juce::ToggleButton loopABButton{ "A-B Loop" };
+    juce::TextButton forward10Button { "=>> +10s" };
+    juce::TextButton backward10Button { "<<= -10s" };
+
 
     //Sliders
     juce::Slider volumeSlider;
@@ -50,14 +53,14 @@ private:
     juce::Label authorLabel;
     juce::Label durationLabel;
 
-//Variables
+    //Variables
     bool shouldLoop = false; //Keeps track of whether looping is enabled or not
     bool isMuted = false;
 
-//File Chooser
+    //File Chooser
     std::unique_ptr<juce::FileChooser> fileChooser;
 
-//Event handlers
+    //Event handlers
     void buttonClicked(juce::Button* button) override;
     void sliderValueChanged(juce::Slider* slider) override;
 

@@ -67,7 +67,7 @@ bool PlayerAudio::readMeta(const juce::File& file){
             if (author.isEmpty()){
                 author = meta["IART"];
             }
-            
+
             //Calculate duration
             double lengthSeconds = transportSource.getLengthInSeconds();
             int seconds = (int) lengthSeconds;
@@ -150,10 +150,10 @@ void PlayerAudio::handleEnd(){
 //Mute effect
 void PlayerAudio::setMute(bool shouldMute){
     if (shouldMute){
-        lastGainBeforeMute = currentGain;  
+        lastGainBeforeMute = currentGain;
         transportSource.setGain(0.0);
     }else{
-        transportSource.setGain(lastGainBeforeMute); 
+        transportSource.setGain(lastGainBeforeMute);
     }
 }
 
@@ -224,4 +224,31 @@ void PlayerAudio::setLoopEndPoint(){
 
 void PlayerAudio::setABLooping(bool shouldABLoop){
     isABLoopingActive = shouldABLoop;
+}
+
+//Move the audio 10sec
+void PlayerAudio::jumpForward(double seconds)
+{
+    if (transportSource.isPlaying() || transportSource.getCurrentPosition() > 0)
+    {
+        double newPos = transportSource.getCurrentPosition() + seconds;
+        double trackLength = transportSource.getLengthInSeconds();
+
+        if (newPos > trackLength)
+            newPos = trackLength;
+
+        transportSource.setPosition(newPos);
+    }
+}
+
+void PlayerAudio::jumpBackward(double seconds)
+{
+    if (transportSource.isPlaying() || transportSource.getCurrentPosition() > 0)
+    {
+        double newPos = transportSource.getCurrentPosition() - seconds;
+        if (newPos < 0)
+            newPos = 0;
+
+        transportSource.setPosition(newPos);
+    }
 }

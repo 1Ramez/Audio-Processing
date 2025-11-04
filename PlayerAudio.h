@@ -29,6 +29,7 @@ public:
     void setLoopStartPoint();
     void setLoopEndPoint();
     void setABLooping(bool shouldABLoop);
+    bool isPlaying();
 
     juce::String getTitle() const;
     juce::String getAuthor() const;

@@ -16,12 +16,8 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
     transportSource.getNextAudioBlock(bufferToFill);
     handleEnd();
 
- if (isABLoopingActive && transportSource.isPlaying())
-    {
-
-        if (transportSource.getCurrentPosition() >= loopEndSeconds)
-        {
-
+    if (isABLoopingActive && transportSource.isPlaying()){
+        if (transportSource.getCurrentPosition() >= loopEndSeconds){
             transportSource.setPosition(loopStartSeconds);
         }
     }
@@ -97,6 +93,10 @@ void PlayerAudio::start(){
 
 void PlayerAudio::stop(){
     transportSource.stop();
+}
+
+bool PlayerAudio::isPlaying(){
+    return transportSource.isPlaying();
 }
 
 void PlayerAudio::setGain(float gain){

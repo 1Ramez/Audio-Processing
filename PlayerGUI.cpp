@@ -100,6 +100,10 @@ void PlayerGUI::displayMeta(){
     durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
 }
 
+bool PlayerGUI::isPlaying(){
+    return playerAudio.isPlaying();
+}
+
 void PlayerGUI::buttonClicked(juce::Button* button){
     if (button == &loadButton){
         fileChooser = std::make_unique<juce::FileChooser>(

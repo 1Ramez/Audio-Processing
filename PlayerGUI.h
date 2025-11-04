@@ -19,6 +19,7 @@ public:
     void releaseResources();
     void displayMeta();
     void timerCallback() override;
+    bool isPlaying();
 private:
     PlayerAudio playerAudio;
 

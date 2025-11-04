@@ -20,6 +20,7 @@ public:
     void displayMeta();
     void timerCallback() override;
     bool isPlaying();
+    bool keyPressed (const juce::KeyPress& key) override;
 private:
     PlayerAudio playerAudio;
 

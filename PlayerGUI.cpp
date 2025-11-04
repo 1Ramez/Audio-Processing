@@ -36,6 +36,9 @@ PlayerGUI::PlayerGUI(){
    //For toggle button
     addAndMakeVisible(loopABButton);
     loopABButton.addListener(this);
+
+    setWantsKeyboardFocus(true);
+
 }
 
 PlayerGUI::~PlayerGUI(){
@@ -272,4 +275,44 @@ void PlayerGUI::timerCallback()
     juce::String timeRemaining = juce::String::formatted("%02d:%02d", minutes, secs);
     positionSlider.setValue(current / total, juce::dontSendNotification);
     positionSlider.setTextValueSuffix("  " + timeRemaining);
+}
+
+//keyboard control
+
+bool PlayerGUI::keyPressed (const juce::KeyPress& key)
+{
+    // Space =>> Play / Pause
+    if (key == juce::KeyPress::spaceKey)
+    {
+        if (playerAudio.isPlaying())
+            playerAudio.stop();
+        else
+            playerAudio.start();
+        return true;
+    }
+
+    // M =>> Mute / Unmute
+    if (key.getTextCharacter() == 'm' || key.getTextCharacter() == 'M')
+    {
+        isMuted = !isMuted;
+        playerAudio.setMute(isMuted);
+        muteButton.setButtonText(isMuted ? "Unmute" : "Mute");
+        return true;
+    }
+
+    // =>> <== Jump 10s back / forward
+    if (key == juce::KeyPress::leftKey)
+    {
+        playerAudio.jumpBackward(10.0);
+        return true;
+    }
+    if (key == juce::KeyPress::rightKey)
+    {
+        playerAudio.jumpForward(10.0);
+        return true;
+    }
+
+
+
+    return false;
 }

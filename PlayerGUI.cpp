@@ -112,8 +112,7 @@ void PlayerGUI::paint(juce::Graphics& g){
 g.setColour(juce::Colours::black);
 g.fillRect(waveformArea);
 
-if (thumbnail.getTotalLength() > 0.0)
-{
+if (thumbnail.getTotalLength() > 0.0){
     g.setColour(juce::Colours::white);
     thumbnail.drawChannels(g, waveformArea, 0.0, thumbnail.getTotalLength(), 1.0);
 
@@ -123,8 +122,7 @@ if (thumbnail.getTotalLength() > 0.0)
     g.setColour(juce::Colours::red);
     g.drawLine((float)posX, (float)waveformArea.getY(),(float)posX, (float)waveformArea.getBottom(), 2.0);
 }
-else
-{
+else{
     g.setColour(juce::Colours::white);
     g.drawFittedText("No file loaded", waveformArea, juce::Justification::centred, 1);
 }
@@ -316,7 +314,7 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider){
     }
 
     if (slider == &speedSlider){
-    playerAudio.setPlaybackSpeed(speedSlider.getValue());
+        playerAudio.setPlaybackSpeed(speedSlider.getValue());
     }
 }
 
@@ -335,7 +333,7 @@ void PlayerGUI::timerCallback(){
     positionSlider.setValue(current / total, juce::dontSendNotification);
     positionSlider.setTextValueSuffix("  " + timeRemaining);
 
-    currentPosInTrack = playerAudio.getPosition();
+    currentPosInTrack = playerAudio.getPosition() * playerAudio.getPlaybackSpeed();
     repaint();  // refresh waveform pointer
 
 }

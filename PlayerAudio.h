@@ -33,6 +33,7 @@ public:
     void jumpForward(double seconds);
     void jumpBackward(double seconds);
     void setPlaybackSpeed(double newSpeed);
+    double getPlaybackSpeed();
     bool getTrackChanged();
     void setTrackChanged(bool changed);
     juce::File getCurrentFile();

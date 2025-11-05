@@ -260,6 +260,10 @@ void PlayerAudio::setPlaybackSpeed(double newSpeed){
     }
 }
 
+double PlayerAudio::getPlaybackSpeed(){
+    return playbackSpeed;
+}
+
 juce::File PlayerAudio::getCurrentFile(){
     return playlistFiles[currFileIndex];
 }

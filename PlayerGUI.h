@@ -5,7 +5,8 @@
 class PlayerGUI : public juce::Component,
     public juce::Button::Listener,
     public juce::Slider::Listener,
-    public juce::Timer
+    public juce::Timer,
+    public juce::ChangeListener
 {
 public:
     PlayerGUI();
@@ -21,6 +22,10 @@ public:
     void timerCallback() override;
     bool isPlaying();
     bool keyPressed (const juce::KeyPress& key) override;
+
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+
+
 private:
     PlayerAudio playerAudio;
 
@@ -55,6 +60,13 @@ private:
     juce::Label authorLabel;
     juce::Label durationLabel;
     juce::Label speedLabel;
+
+    //Waveform 
+    juce::AudioThumbnailCache thumbnailCache{5};
+    juce::AudioFormatManager formatManager;
+    juce::AudioThumbnail thumbnail{512, formatManager, thumbnailCache};
+    double currentPosInTrack = 0.0;
+
 
     //Variables
     bool shouldLoop = false; //Keeps track of whether looping is enabled or not

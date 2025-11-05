@@ -48,6 +48,12 @@ PlayerGUI::PlayerGUI(){
     loopABButton.addListener(this);
 
     setWantsKeyboardFocus(true);
+    
+    
+    formatManager.registerBasicFormats();
+    thumbnail.addChangeListener(this);
+    // (rest of your constructor code)
+
 
 }
 
@@ -91,7 +97,7 @@ void PlayerGUI::resized(){
     positionSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
 
     auto area = getLocalBounds();
-    auto sliderHeight = 30;
+    auto sliderHeight = 80;
     speedLabel.setBounds(area.removeFromBottom(sliderHeight));
     speedSlider.setBounds(area.removeFromBottom(sliderHeight));
 
@@ -99,6 +105,28 @@ void PlayerGUI::resized(){
 
 void PlayerGUI::paint(juce::Graphics& g){
     g.fillAll(juce::Colours::mediumslateblue);
+
+    auto waveformArea = juce::Rectangle<int>(20, 300, getWidth() - 40, 100);
+g.setColour(juce::Colours::black);
+g.fillRect(waveformArea);
+
+if (thumbnail.getTotalLength() > 0.0)
+{
+    g.setColour(juce::Colours::white);
+    thumbnail.drawChannels(g, waveformArea, 0.0, thumbnail.getTotalLength(), 1.0);
+
+    // Draw red playback position line
+    double posRatio = currentPosInTrack / thumbnail.getTotalLength();
+    int posX = waveformArea.getX() + (int)(posRatio * waveformArea.getWidth());
+    g.setColour(juce::Colours::red);
+    g.drawLine((float)posX, (float)waveformArea.getY(),(float)posX, (float)waveformArea.getBottom(), 2.0);
+}
+else
+{
+    g.setColour(juce::Colours::white);
+    g.drawFittedText("No file loaded", waveformArea, juce::Justification::centred, 1);
+}
+
 }
 
 void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
@@ -146,6 +174,11 @@ void PlayerGUI::buttonClicked(juce::Button* button){
 
                     //To cancel previous playlist
                     playerAudio.delPlaylist();
+
+                    thumbnail.clear();
+                    thumbnail.setSource(new juce::FileInputSource(file));
+
+
                 }
             });
 
@@ -290,6 +323,11 @@ void PlayerGUI::timerCallback()
     juce::String timeRemaining = juce::String::formatted("%02d:%02d", minutes, secs);
     positionSlider.setValue(current / total, juce::dontSendNotification);
     positionSlider.setTextValueSuffix("  " + timeRemaining);
+
+    currentPosInTrack = playerAudio.getPosition();
+    repaint();  // refresh waveform pointer
+
+
 }
 
 //keyboard control
@@ -330,4 +368,10 @@ bool PlayerGUI::keyPressed (const juce::KeyPress& key)
 
 
     return false;
+}
+
+void PlayerGUI::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+    if (source == &thumbnail)
+        repaint();  // redraw waveform when thumbnail updates
 }

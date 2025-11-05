@@ -24,6 +24,7 @@ public:
     bool keyPressed (const juce::KeyPress& key) override;
 
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+    void updateThumbnail();
 
 
 private:

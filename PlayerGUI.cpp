@@ -3,19 +3,21 @@
 PlayerGUI::PlayerGUI(){
     // Add buttons
     for (auto* btn : {&loadButton, &restartButton, &stopButton, &playButton,
-            &pauseButton, &loopButton, &toStartButton, &toEndButton, &muteButton, &loadPlaylistButton, &nextButton, &previousButton, &setAButton, &setBButton, &backward10Button ,&forward10Button}){
+            &pauseButton, &loopButton, &toStartButton, &toEndButton, &muteButton,
+            &loadPlaylistButton, &nextButton, &previousButton, &setAButton, &setBButton, &backward10Button ,&forward10Button}){
 
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
 
-    //Add Labels
+    //Add metaData Labels
     for (auto* label : {&titleLabel, &authorLabel, &durationLabel}){
         addAndMakeVisible(label);
         label->setColour(juce::Label::backgroundColourId, juce::Colours::darkslategrey);
         label->setEditable(false,false,false);
         label->setJustificationType(juce::Justification::centred);
     }
+
     titleLabel.setText("Title: ", juce::dontSendNotification);
     authorLabel.setText("Author: ", juce::dontSendNotification);
     durationLabel.setText("Duration: ", juce::dontSendNotification);
@@ -33,7 +35,7 @@ PlayerGUI::PlayerGUI(){
     addAndMakeVisible(positionSlider);
     startTimerHz(10);
 
-    // Speed slider
+    // Speed slider and label
     addAndMakeVisible(speedSlider);
     speedSlider.setRange(0.5, 2.0, 0.01);
     speedSlider.setValue(1.0);
@@ -136,6 +138,7 @@ void PlayerGUI::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
 void PlayerGUI::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill){
     playerAudio.getNextAudioBlock(bufferToFill);
     displayMeta();
+    updateThumbnail();
 }
 
 void PlayerGUI::releaseResources(){
@@ -150,6 +153,13 @@ void PlayerGUI::displayMeta(){
 
 bool PlayerGUI::isPlaying(){
     return playerAudio.isPlaying();
+}
+void PlayerGUI::updateThumbnail(){
+    if(playerAudio.getTrackChanged()){
+        playerAudio.setTrackChanged(false);
+        thumbnail.clear();
+        thumbnail.setSource(new juce::FileInputSource(playerAudio.getCurrentFile()));
+    }
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button){
@@ -174,10 +184,10 @@ void PlayerGUI::buttonClicked(juce::Button* button){
 
                     //To cancel previous playlist
                     playerAudio.delPlaylist();
-
+                    
+                    //Show waveform
                     thumbnail.clear();
                     thumbnail.setSource(new juce::FileInputSource(file));
-
 
                 }
             });
@@ -255,6 +265,10 @@ void PlayerGUI::buttonClicked(juce::Button* button){
 
                 // Update metadata labels for the first file
                 displayMeta();
+
+                //Show waveform
+                thumbnail.clear();
+                thumbnail.setSource(new juce::FileInputSource(files[0]));
             });
     }
 
@@ -268,25 +282,23 @@ void PlayerGUI::buttonClicked(juce::Button* button){
         displayMeta();
     }
 
-    if (button == &setAButton)
-    {
+    if (button == &setAButton){
         playerAudio.setLoopStartPoint();
     }
-    if (button == &setBButton)
-    {
+
+    if (button == &setBButton){
         playerAudio.setLoopEndPoint();
     }
-    if (button == &loopABButton)
-    {
+
+    if (button == &loopABButton){
         playerAudio.setABLooping(loopABButton.getToggleState());
     }
 
-     if (button == &forward10Button)
-    {
+    if (button == &forward10Button){
         playerAudio.jumpForward(10.0);
     }
-    if (button == &backward10Button)
-    {
+
+    if (button == &backward10Button){
         playerAudio.jumpBackward(10.0);
     }
 }
@@ -308,8 +320,7 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider){
     }
 }
 
-void PlayerGUI::timerCallback()
-{
+void PlayerGUI::timerCallback(){
     double current = playerAudio.getPosition();
     double total = playerAudio.getLength();
     if (total <= 0.0)
@@ -327,16 +338,13 @@ void PlayerGUI::timerCallback()
     currentPosInTrack = playerAudio.getPosition();
     repaint();  // refresh waveform pointer
 
-
 }
 
 //keyboard control
 
-bool PlayerGUI::keyPressed (const juce::KeyPress& key)
-{
+bool PlayerGUI::keyPressed (const juce::KeyPress& key){
     // Space =>> Play / Pause
-    if (key == juce::KeyPress::spaceKey)
-    {
+    if (key == juce::KeyPress::spaceKey){
         if (playerAudio.isPlaying())
             playerAudio.stop();
         else
@@ -345,8 +353,7 @@ bool PlayerGUI::keyPressed (const juce::KeyPress& key)
     }
 
     // M =>> Mute / Unmute
-    if (key.getTextCharacter() == 'm' || key.getTextCharacter() == 'M')
-    {
+    if (key.getTextCharacter() == 'm' || key.getTextCharacter() == 'M'){
         isMuted = !isMuted;
         playerAudio.setMute(isMuted);
         muteButton.setButtonText(isMuted ? "Unmute" : "Mute");
@@ -354,13 +361,12 @@ bool PlayerGUI::keyPressed (const juce::KeyPress& key)
     }
 
     // =>> <== Jump 10s back / forward
-    if (key == juce::KeyPress::leftKey)
-    {
+    if (key == juce::KeyPress::leftKey){
         playerAudio.jumpBackward(10.0);
         return true;
     }
-    if (key == juce::KeyPress::rightKey)
-    {
+
+    if (key == juce::KeyPress::rightKey){
         playerAudio.jumpForward(10.0);
         return true;
     }
@@ -370,8 +376,8 @@ bool PlayerGUI::keyPressed (const juce::KeyPress& key)
     return false;
 }
 
-void PlayerGUI::changeListenerCallback(juce::ChangeBroadcaster* source)
-{
-    if (source == &thumbnail)
-        repaint();  // redraw waveform when thumbnail updates
+void PlayerGUI::changeListenerCallback(juce::ChangeBroadcaster* source){
+    if (source == &thumbnail){
+        repaint();  // redraw waveform when thumbnail updates    
+    }
 }

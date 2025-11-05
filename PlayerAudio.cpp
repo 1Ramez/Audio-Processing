@@ -183,6 +183,7 @@ void PlayerAudio::playNext(){
 
     loadFile(playlistFiles[currFileIndex]);
     readMeta(playlistFiles[currFileIndex]);
+    trackChanged = true;
 }
 
 //playing previous file in the playlist
@@ -197,6 +198,7 @@ void PlayerAudio::playPrevious(){
 
     loadFile(playlistFiles[currFileIndex]);
     readMeta(playlistFiles[currFileIndex]);
+    trackChanged = true;
 }
 
 //reset the playlist (used to cancel current playlist when playing a signle file)
@@ -227,10 +229,8 @@ void PlayerAudio::setABLooping(bool shouldABLoop){
 }
 
 //Move the audio 10sec
-void PlayerAudio::jumpForward(double seconds)
-{
-    if (transportSource.isPlaying() || transportSource.getCurrentPosition() > 0)
-    {
+void PlayerAudio::jumpForward(double seconds){
+    if (transportSource.isPlaying() || transportSource.getCurrentPosition() > 0){
         double newPos = transportSource.getCurrentPosition() + seconds;
         double trackLength = transportSource.getLengthInSeconds();
 
@@ -241,8 +241,7 @@ void PlayerAudio::jumpForward(double seconds)
     }
 }
 
-void PlayerAudio::jumpBackward(double seconds)
-{
+void PlayerAudio::jumpBackward(double seconds){
     if (transportSource.isPlaying() || transportSource.getCurrentPosition() > 0)
     {
         double newPos = transportSource.getCurrentPosition() - seconds;
@@ -259,4 +258,15 @@ void PlayerAudio::setPlaybackSpeed(double newSpeed){
     double originalSampleRate = readerSource->getAudioFormatReader()->sampleRate;
     transportSource.setSource(readerSource.get(), 0, nullptr, originalSampleRate * playbackSpeed);
     }
+}
+
+juce::File PlayerAudio::getCurrentFile(){
+    return playlistFiles[currFileIndex];
+}
+bool PlayerAudio::getTrackChanged(){
+    return trackChanged;
+}
+
+void PlayerAudio::setTrackChanged(bool changed){
+    trackChanged = changed;
 }

@@ -32,6 +32,7 @@ public:
     bool isPlaying();
     void jumpForward(double seconds);
     void jumpBackward(double seconds);
+    void setPlaybackSpeed(double newSpeed);
 
     juce::String getTitle() const;
     juce::String getAuthor() const;
@@ -44,6 +45,7 @@ private:
 
     double loopStartSeconds = 0.0;
     double loopEndSeconds = 0.0;
+    double playbackSpeed = 1.0;
     bool isABLoopingActive = false;
     bool isLooping = false;
     float currentGain = 0.5;

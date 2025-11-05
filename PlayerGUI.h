@@ -48,11 +48,13 @@ private:
     //Sliders
     juce::Slider volumeSlider;
     juce::Slider positionSlider;
+    juce::Slider speedSlider;
 
     //Labels
     juce::Label titleLabel;
     juce::Label authorLabel;
     juce::Label durationLabel;
+    juce::Label speedLabel;
 
     //Variables
     bool shouldLoop = false; //Keeps track of whether looping is enabled or not

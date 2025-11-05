@@ -252,3 +252,11 @@ void PlayerAudio::jumpBackward(double seconds)
         transportSource.setPosition(newPos);
     }
 }
+
+void PlayerAudio::setPlaybackSpeed(double newSpeed){
+    playbackSpeed = juce::jlimit(0.5, 2.0, newSpeed); // limit between half-speed and double-speed
+    if (readerSource != nullptr && readerSource->getAudioFormatReader() != nullptr){
+    double originalSampleRate = readerSource->getAudioFormatReader()->sampleRate;
+    transportSource.setSource(readerSource.get(), 0, nullptr, originalSampleRate * playbackSpeed);
+    }
+}

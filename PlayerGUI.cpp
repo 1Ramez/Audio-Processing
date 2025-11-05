@@ -33,6 +33,16 @@ PlayerGUI::PlayerGUI(){
     addAndMakeVisible(positionSlider);
     startTimerHz(10);
 
+    // Speed slider
+    addAndMakeVisible(speedSlider);
+    speedSlider.setRange(0.5, 2.0, 0.01);
+    speedSlider.setValue(1.0);
+    speedSlider.addListener(this);
+
+    addAndMakeVisible(speedLabel);
+    speedLabel.setText("Speed", juce::dontSendNotification);
+    speedLabel.setJustificationType(juce::Justification::centred);
+
    //For toggle button
     addAndMakeVisible(loopABButton);
     loopABButton.addListener(this);
@@ -79,6 +89,11 @@ void PlayerGUI::resized(){
     positionSlider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 100, 25);
     positionSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
     positionSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
+    auto area = getLocalBounds();
+    auto sliderHeight = 30;
+    speedLabel.setBounds(area.removeFromBottom(sliderHeight));
+    speedSlider.setBounds(area.removeFromBottom(sliderHeight));
 
 }
 
@@ -187,10 +202,7 @@ void PlayerGUI::buttonClicked(juce::Button* button){
     }
 
     if (button == &loadPlaylistButton){
-        // juce::FileChooser chooser("Select audio files...",
-        //     juce::File{},
-        //     "*.wav;*.mp3");
-
+        
         fileChooser = std::make_unique<juce::FileChooser>(
             "Select multiple audio files...",
             juce::File{},
@@ -252,12 +264,15 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider){
         muteButton.setButtonText("Mute");
         isMuted = false;
     }
-    if (slider == &positionSlider && playerAudio.getLength() > 0)
-    {
+
+    if (slider == &positionSlider && playerAudio.getLength() > 0){
         double newPos = positionSlider.getValue() * playerAudio.getLength();
         playerAudio.setPosition(newPos);
     }
 
+    if (slider == &speedSlider){
+    playerAudio.setPlaybackSpeed(speedSlider.getValue());
+    }
 }
 
 void PlayerGUI::timerCallback()

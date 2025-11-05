@@ -5,7 +5,6 @@ PlayerAudio::PlayerAudio(){
 }
 
 PlayerAudio::~PlayerAudio(){
-
 }
 
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate){
@@ -102,7 +101,6 @@ bool PlayerAudio::isPlaying(){
 }
 
 void PlayerAudio::setGain(float gain){
-    //save current audio
     currentGain = gain;
     transportSource.setGain(gain);
 }
@@ -234,26 +232,25 @@ void PlayerAudio::jumpForward(double seconds){
         double newPos = transportSource.getCurrentPosition() + seconds;
         double trackLength = transportSource.getLengthInSeconds();
 
-        if (newPos > trackLength)
+        if (newPos > trackLength){
             newPos = trackLength;
-
+        }
         transportSource.setPosition(newPos);
     }
 }
 
 void PlayerAudio::jumpBackward(double seconds){
-    if (transportSource.isPlaying() || transportSource.getCurrentPosition() > 0)
-    {
+    if (transportSource.isPlaying() || transportSource.getCurrentPosition() > 0){
         double newPos = transportSource.getCurrentPosition() - seconds;
-        if (newPos < 0)
+        if (newPos < 0){
             newPos = 0;
-
+        }
         transportSource.setPosition(newPos);
     }
 }
 
 void PlayerAudio::setPlaybackSpeed(double newSpeed){
-    // Save old speed and playback state
+    // Save old speed and playback state (to allow using speed slider when the track is working)
     double oldSpeed = playbackSpeed;
     double currPosition = getPosition();
     double fileLength = getLength();
@@ -261,7 +258,7 @@ void PlayerAudio::setPlaybackSpeed(double newSpeed){
 
     playbackSpeed = juce::jlimit(0.5, 2.0, newSpeed);
 
-    // Adjust transport sample rate
+    // Adjust transport sample rate (to make the speed work)
     if (readerSource != nullptr && readerSource->getAudioFormatReader() != nullptr){
         double originalSampleRate = readerSource->getAudioFormatReader()->sampleRate;
         transportSource.setSource(readerSource.get(), 0, nullptr, originalSampleRate * playbackSpeed);
@@ -276,10 +273,6 @@ void PlayerAudio::setPlaybackSpeed(double newSpeed){
         transportSource.start();
 }
 
-
-
-
-
 double PlayerAudio::getPlaybackSpeed(){
     return playbackSpeed;
 }
@@ -287,6 +280,7 @@ double PlayerAudio::getPlaybackSpeed(){
 juce::File PlayerAudio::getCurrentFile(){
     return playlistFiles[currFileIndex];
 }
+
 bool PlayerAudio::getTrackChanged(){
     return trackChanged;
 }

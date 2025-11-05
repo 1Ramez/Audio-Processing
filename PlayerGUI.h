@@ -46,7 +46,7 @@ private:
     juce::TextButton previousButton { "Previous" };
     juce::TextButton setAButton{ "Set - A" };
     juce::TextButton setBButton{ "Set - B" };
-    juce::ToggleButton loopABButton{ "A-B Loop" };
+    juce::TextButton loopABButton{ "ABLoop: OFF" };
     juce::TextButton forward10Button { "=>> +10s" };
     juce::TextButton backward10Button { "<<= -10s" };
 
@@ -61,6 +61,7 @@ private:
     juce::Label authorLabel;
     juce::Label durationLabel;
     juce::Label speedLabel;
+    juce::Label volumeLabel;
 
     //Waveform 
     juce::AudioThumbnailCache thumbnailCache{5};
@@ -72,6 +73,7 @@ private:
     //Variables
     bool shouldLoop = false; //Keeps track of whether looping is enabled or not
     bool isMuted = false;
+    bool isLoopAB = false;
 
     //File Chooser
     std::unique_ptr<juce::FileChooser> fileChooser;

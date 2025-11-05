@@ -253,12 +253,32 @@ void PlayerAudio::jumpBackward(double seconds){
 }
 
 void PlayerAudio::setPlaybackSpeed(double newSpeed){
-    playbackSpeed = juce::jlimit(0.5, 2.0, newSpeed); // limit between half-speed and double-speed
+    // Save old speed and playback state
+    double oldSpeed = playbackSpeed;
+    double currPosition = getPosition();
+    double fileLength = getLength();
+    bool wasPlaying = transportSource.isPlaying();
+
+    playbackSpeed = juce::jlimit(0.5, 2.0, newSpeed);
+
+    // Adjust transport sample rate
     if (readerSource != nullptr && readerSource->getAudioFormatReader() != nullptr){
-    double originalSampleRate = readerSource->getAudioFormatReader()->sampleRate;
-    transportSource.setSource(readerSource.get(), 0, nullptr, originalSampleRate * playbackSpeed);
+        double originalSampleRate = readerSource->getAudioFormatReader()->sampleRate;
+        transportSource.setSource(readerSource.get(), 0, nullptr, originalSampleRate * playbackSpeed);
     }
+
+    // Correct position based on change in speed
+    double speedRatio = oldSpeed / playbackSpeed;
+    double scaledPosition = juce::jlimit(0.0, fileLength, currPosition * speedRatio);
+    setPosition(scaledPosition);
+
+    if (wasPlaying)
+        transportSource.start();
 }
+
+
+
+
 
 double PlayerAudio::getPlaybackSpeed(){
     return playbackSpeed;

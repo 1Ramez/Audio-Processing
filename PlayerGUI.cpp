@@ -183,9 +183,6 @@ void PlayerGUI::displayMeta(){
     durationLabel.setText("Duration: " + playerAudio.getDurationText(), juce::dontSendNotification);
 }
 
-bool PlayerGUI::isPlaying(){
-    return playerAudio.isPlaying();
-}
 void PlayerGUI::updateThumbnail(){
     if(playerAudio.getTrackChanged()){
         playerAudio.setTrackChanged(false);

@@ -20,9 +20,7 @@ public:
     void releaseResources();
     void displayMeta();
     void timerCallback() override;
-    bool isPlaying();
     bool keyPressed (const juce::KeyPress& key) override;
-
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
     void updateThumbnail();
 
